@@ -5,26 +5,20 @@ import requests
 # 💡 ご自身のAPIキーをここに貼り付けてください
 API_KEY = "8e8e1efc195bb65308a107e888a1bb6c"
 
-# --- ✨ デザイン設定（視認性最強・水色デザイン） ---
+# --- ✨ デザイン設定 ---
 st.markdown("""
     <style>
     .stApp {
         background: linear-gradient(135deg, #0ea5e9 0%, #38bdf8 100%);
     }
-    
-    /* 入力欄の上の文字（ラベル）を白く太くする */
     .stMarkdown p, label {
         color: white !important;
         font-weight: bold !important;
-        font-size: 1.1rem !important;
     }
-
     h1 {
         color: white !important;
         text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
     }
-
-    /* 天気カード：真っ白にして中の文字を濃い紺にする */
     .weather-card {
         background-color: white;
         padding: 30px;
@@ -33,19 +27,13 @@ st.markdown("""
         text-align: center;
         margin: 20px 0;
     }
-    
     .weather-card h1, .weather-card h2, .weather-card p {
-        color: #0c4a6e !important; /* 濃い紺色 */
+        color: #0c4a6e !important;
     }
-
-    /* ボタン */
     div.stButton > button:first-child {
-        background-color: #f8fafc !important;
+        background-color: white !important;
         color: #0ea5e9 !important;
         font-weight: bold !important;
-        border-radius: 10px !important;
-        border: none !important;
-        height: 3em !important;
         width: 100% !important;
     }
     </style>
@@ -54,16 +42,14 @@ st.markdown("""
 st.title("☀️ お天気コンシェルジュ")
 st.write("日本の都市も、海外の都市も、日本語で入力してみてください！")
 
-# --- 入力エリア ---
-city_input = st.text_input("都市名を入力（例：大阪、那覇、札幌、デンバー）", "大阪")
+city_input = st.text_input("都市名を入力（例：大阪、那覇、ロサンゼルス）", "大阪")
 
 if st.button("天気をチェック！"):
-    # 💡 修正ポイント：日本語をより確実に送るためのURLエンコード対応
-    # requestsが自動で処理してくれますが、パラメータをより明確に分けました
+    # 💡 修正箇所：パラメータのクォーテーションを正しく直しました
     params = {
         "q": city_input,
         "appid": API_KEY,
-        "units": metric",
+        "units": "metric",  # ← ここを修正しました！
         "lang": "ja"
     }
     url = "https://api.openweathermap.org/data/2.5/weather"
@@ -98,11 +84,10 @@ if st.button("天気をチェック！"):
                 st.success("暖かいですね！お出かけ日和です。")
                 
         else:
-            # エラーの詳細を表示して原因を突き止めやすくする
-            st.error(f"「{city_input}」が見つかりませんでした。理由: {data.get('message', '不明なエラー')}")
+            st.error(f"「{city_input}」が見つかりませんでした。綴り（漢字・カナ）を変えて試してみてください。")
             
     except Exception as e:
-        st.error(f"接続エラーが発生しました。")
+        st.error("接続エラーが発生しました。")
 
 st.markdown("---")
 st.caption("Produced by My Weather App | Winter Edition")
