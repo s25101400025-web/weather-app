@@ -5,14 +5,14 @@ import requests
 # 💡 ご自身のAPIキーをここに貼り付けてください
 API_KEY = "8e8e1efc195bb65308a107e888a1bb6c"
 
-# --- ✨ デザイン設定（視認性完成版） ---
+# --- ✨ デザイン設定（視認性最強・エラーなし版） ---
 st.markdown("""
     <style>
     .stApp {
         background: linear-gradient(135deg, #0ea5e9 0%, #38bdf8 100%);
     }
     
-    /* 入力エリアのラベル */
+    /* 入力エリアのラベルを白く太く */
     .stMarkdown p, label {
         color: white !important;
         font-weight: bold !important;
@@ -38,21 +38,22 @@ st.markdown("""
         color: #0c4a6e !important;
     }
 
-    /* 💡 助言エリア：ここを絶対に背景に負けない色にします */
+    /* 💡 助言エリア：不透明な白背景に濃い紺色の文字 */
     .advice-box {
-        background-color: #ffffff !important; /* 真っ白 */
+        background-color: #ffffff !important;
         padding: 20px;
         border-radius: 15px;
-        border-left: 8px solid #0c4a6e; /* 濃い紺のアクセント */
+        border-left: 8px solid #0c4a6e;
         box-shadow: 0px 5px 15px rgba(0,0,0,0.1);
         margin-top: 10px;
     }
     
     .advice-text {
-        color: #0c4a6e !important; /* 文字を一番濃い紺色に */
-        font-size: 1.2rem !important;
+        color: #0c4a6e !important;
+        font-size: 1.1rem !important;
         font-weight: bold !important;
         margin: 0 !important;
+        line-height: 1.5 !important;
     }
     
     /* ボタン */
@@ -70,9 +71,10 @@ st.markdown("""
 st.title("☀️ お天気コンシェルジュ")
 st.write("日本の都市も、海外の都市も、日本語で入力してみてください！")
 
-city_input = st.text_input("都市名を入力（例：東京、大阪、ロサンゼルス）", "東京")
+city_input = st.text_input("都市名を入力（例：東京、大阪、札幌、ロサンゼルス）", "東京")
 
 if st.button("天気をチェック！"):
+    # 内部変換用のマップ
     jp_to_en = {
         "東京": "Tokyo", "大阪": "Osaka", "札幌": "Sapporo", "名古屋": "Nagoya",
         "福岡": "Fukuoka", "沖縄": "Okinawa", "那覇": "Naha", "横浜": "Yokohama",
@@ -99,7 +101,7 @@ if st.button("天気をチェック！"):
             temp = round(data["main"]["temp"], 1)
             formal_name = data["name"]
             
-            # メイン結果
+            # メインの天気カード
             st.markdown(f"""
                 <div class="weather-card">
                     <h2 style='margin: 0;'>📍 {city_input}</h2>
@@ -111,13 +113,27 @@ if st.button("天気をチェック！"):
             
             st.snow()
             
-            # 助言エリアの表示
+            # 💡 助言エリア（ここをクォーテーション・ミスなく修正しました）
             st.markdown("<h3 style='color: white;'>💡 コンシェルジュの助言</h3>", unsafe_allow_html=True)
             
-            advice_text = ""
             if temp < 10:
-                advice_text = f"🥶 現在の{city_input}はかなり寒いです！厚着をしてお出かけください。"
+                advice = f"🥶 現在の{city_input}はかなり寒いです！しっかり防寒してください。"
             elif temp < 20:
-                advice_text = f"🧥 少し肌寒いかもしれません。羽織るものを持っていきましょう。"
+                advice = f"🧥 少し肌寒いかもしれません。羽織るものがあると安心です。"
             else:
-                advice_text = f"👕 過ごしやすい気温です！
+                advice = f"👕 過ごしやすい気温です！軽装でお出かけを楽しんでください。"
+            
+            st.markdown(f"""
+                <div class="advice-box">
+                    <p class="advice-text">{advice}</p>
+                </div>
+            """, unsafe_allow_html=True)
+                
+        else:
+            st.error(f"「{city_input}」のデータが見つかりませんでした。")
+            
+    except Exception as e:
+        st.error(f"エラーが発生しました。")
+
+st.markdown("---")
+st.caption("Produced by My Weather App | 全世界対応・日本語
