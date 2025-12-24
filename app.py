@@ -2,30 +2,53 @@ import streamlit as st
 import requests
 
 # --- 設定 ---
-# 💡 ご自身のAPIキーをここに貼り付けてください
 API_KEY = "8e8e1efc195bb65308a107e888a1bb6c"
 
-# --- ✨ デザイン設定（不具合の原因となるCSSを最小限にしました） ---
+# --- ✨ 強制ライトモード・デザイン設定 ---
 st.markdown("""
     <style>
+    /* 全体の背景 */
     .stApp {
         background: linear-gradient(135deg, #0ea5e9 0%, #38bdf8 100%);
     }
-    /* 入力エリアなどのラベルを白に固定 */
-    .stMarkdown p, label, .stTextInput {
+    
+    /* 入力欄のラベル（白） */
+    .stMarkdown p, label {
         color: white !important;
         font-weight: bold !important;
     }
-    h1 {
-        color: white !important;
+
+    /* 💡 魔法の命令：このカードの中だけは「絶対にライトモード」として扱う */
+    .force-light-card {
+        background-color: #ffffff !important;
+        color: #111111 !important; /* 真っ黒に近い紺 */
+        padding: 30px;
+        border-radius: 20px;
         text-align: center;
+        margin: 20px 0;
+        box-shadow: 0px 10px 25px rgba(0,0,0,0.2);
+        
+        /* ブラウザの自動反転を禁止する命令 */
+        color-scheme: light !important; 
     }
-    /* ボタンを白背景に固定 */
+
+    /* カード内の全ての文字を強制的に黒くする */
+    .force-light-card h1, 
+    .force-light-card h2, 
+    .force-light-card h3, 
+    .force-light-card p,
+    .force-light-card span {
+        color: #111111 !important;
+        -webkit-text-fill-color: #111111 !important; /* iPhoneなどの対策 */
+    }
+
+    /* ボタン */
     div.stButton > button:first-child {
         background-color: white !important;
         color: #0ea5e9 !important;
         font-weight: bold !important;
         width: 100% !important;
+        border: none !important;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -38,8 +61,7 @@ if st.button("天気をチェック！"):
     jp_to_en = {
         "東京": "Tokyo", "大阪": "Osaka", "札幌": "Sapporo", "名古屋": "Nagoya",
         "福岡": "Fukuoka", "沖縄": "Okinawa", "那覇": "Naha", "横浜": "Yokohama",
-        "ロサンゼルス": "Los Angeles", "デンバー": "Denver", "ロンドン": "London",
-        "パリ": "Paris", "ニューヨーク": "New York"
+        "ロサンゼルス": "Los Angeles", "ニューヨーク": "New York"
     }
     search_city = jp_to_en.get(city_input, city_input)
 
@@ -53,17 +75,18 @@ if st.button("天気をチェック！"):
             weather_desc = data["weather"][0]["description"]
             temp = round(data["main"]["temp"], 1)
             
-            # 1️⃣ メインカード（全ての文字に style='color: #0c4a6e !important;' を直接書きました）
+            # 1️⃣ メインの気温カード
             st.markdown(f"""
-                <div style="background-color: white; padding: 30px; border-radius: 20px; text-align: center; margin: 20px 0; box-shadow: 0px 10px 20px rgba(0,0,0,0.1);">
-                    <h2 style="color: #0c4a6e !important; margin: 0;">📍 {city_input}</h2>
-                    <h1 style="color: #0c4a6e !important; font-size: 60px; margin: 10px 0; border: none;">{temp} ℃</h1>
-                    <p style="color: #0c4a6e !important; font-size: 20px; font-weight: bold;">{weather_desc}</p>
+                <div class="force-light-card">
+                    <h2 style="margin:0;">📍 {city_input}</h2>
+                    <h1 style="font-size: 70px; margin: 15px 0;">{temp} ℃</h1>
+                    <p style="font-size: 22px;">{weather_desc}</p>
                 </div>
             """, unsafe_allow_html=True)
             
             st.snow()
             
+            # 助言エリア
             st.markdown("<h3 style='color: white; text-align: center;'>💡 コンシェルジュの助言</h3>", unsafe_allow_html=True)
             
             if temp < 10:
@@ -73,13 +96,13 @@ if st.button("天気をチェック！"):
                 advice = "少し肌寒いですね。ジャケットなど羽織るものを持っていきましょう。"
                 icon = "🧥"
             else:
-                advice = "暖かいですよ。軽装でお出かけを楽しんでください！"
+                advice = "過ごしやすい気温です。お出かけを楽しんでください！"
                 icon = "👕"
             
-            # 2️⃣ 助言カード（こちらも全ての文字を強制的に「黒」に指定しました）
+            # 2️⃣ 助言カード（ここも強制ライトモード）
             st.markdown(f"""
-                <div style="background-color: white; padding: 25px; border-radius: 15px; border-left: 10px solid #0c4a6e; box-shadow: 0px 5px 15px rgba(0,0,0,0.2);">
-                    <p style="color: #000000 !important; font-size: 1.2rem; font-weight: 900; margin: 0; line-height: 1.5;">
+                <div class="force-light-card" style="padding: 20px; border-left: 10px solid #0c4a6e; text-align: left;">
+                    <p style="font-size: 1.2rem; font-weight: bold; margin: 0;">
                         {icon} {advice}
                     </p>
                 </div>
