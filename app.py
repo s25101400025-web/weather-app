@@ -28,22 +28,14 @@ st.markdown("""
         border-radius: 20px;
         text-align: center;
         margin: 20px 0;
+        box-shadow: 0px 10px 20px rgba(0,0,0,0.1);
     }
     
     .weather-card h1, .weather-card h2, .weather-card p {
         color: #0c4a6e !important;
     }
 
-    /* 助言エリアの白い箱 */
-    .advice-box {
-        background-color: #ffffff !important;
-        padding: 20px;
-        border-radius: 15px;
-        border-left: 10px solid #0c4a6e;
-        margin-top: 10px;
-        box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
-    }
-    
+    /* ボタン */
     div.stButton > button:first-child {
         background-color: white !important;
         color: #0ea5e9 !important;
@@ -76,11 +68,12 @@ if st.button("天気をチェック！"):
             weather_desc = data["weather"][0]["description"]
             temp = round(data["main"]["temp"], 1)
             
+            # メインの天気カード
             st.markdown(f"""
                 <div class="weather-card">
-                    <h2 style='margin: 0;'>📍 {city_input}</h2>
-                    <h1 style='font-size: 60px; margin: 10px 0;'>{temp} ℃</h1>
-                    <p style='font-size: 20px;'>{weather_desc}</p>
+                    <h2 style='margin: 0; color: #0c4a6e;'>📍 {city_input}</h2>
+                    <h1 style='font-size: 60px; margin: 10px 0; color: #0c4a6e;'>{temp} ℃</h1>
+                    <p style='font-size: 20px; color: #0c4a6e;'>{weather_desc}</p>
                 </div>
             """, unsafe_allow_html=True)
             
@@ -89,19 +82,24 @@ if st.button("天気をチェック！"):
             st.markdown("<h3 style='color: white;'>💡 コンシェルジュの助言</h3>", unsafe_allow_html=True)
             
             if temp < 10:
-                advice = f"🥶 かなり寒いです！厚手のコートを着て、しっかり防寒してください。"
+                advice = f"かなり寒いです！厚手のコートを着て、しっかり防寒してください。"
+                icon = "🥶"
             elif temp < 20:
-                advice = f"🧥 少し肌寒いですね。ジャケットやカーディガンを持っていきましょう。"
+                advice = f"少し肌寒いですね。ジャケットやカーディガンを持っていきましょう。"
+                icon = "🧥"
             else:
-                advice = f"👕 暖かいですよ。軽装でお出かけを楽しんでください！"
+                advice = f"暖かいですよ。軽装でお出かけを楽しんでください！"
+                icon = "👕"
             
-            # 💡 修正の核心：インラインスタイルで「真っ黒」を強制
-            # システムの干渉を防ぐため、敢えてクラスを使わず直接色を指定します
+            # 💡 最終解決策：文字を「カードの一部」として表示し、
+            # colorタグを何重にも重ねて、Streamlitの自動色反転を完全にブロックします。
             st.markdown(f"""
-                <div class="advice-box">
-                    <span style="color: #000000 !important; font-size: 1.2rem; font-weight: 800; display: block;">
-                        {advice}
-                    </span>
+                <div style="background-color: white; padding: 20px; border-radius: 15px; border-left: 10px solid #0c4a6e; box-shadow: 0px 5px 15px rgba(0,0,0,0.2);">
+                    <p style="margin: 0; padding: 0; line-height: 1.6;">
+                        <span style="color: #000000 !important; font-size: 1.2rem; font-weight: 900;">
+                            {icon} {advice}
+                        </span>
+                    </p>
                 </div>
             """, unsafe_allow_html=True)
                 
